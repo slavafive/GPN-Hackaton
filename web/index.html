@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GPN-Hackathon</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Varela+Round&display=swap">
+</head>
+<body>
+
+<div class="search">
+    <div class="icon">
+    </div>
+    <div class="input">
+        <input type="text" placeholder="Поиск" id="mysearch">
+    </div>
+    <span class="clear" onclick="document.getElementById('mysearch').value = ''"></span>
+</div>
+
+<script>
+    const icon = document.querySelector('.icon');
+    const search = document.querySelector('.search');
+    icon.onclick = function (){
+        search.classList.toggle('active')
+    }
+</script>
+</body>
+</html>
