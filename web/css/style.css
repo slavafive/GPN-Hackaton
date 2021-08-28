@@ -104,7 +104,7 @@ body{
     position: absolute;
     content: '';
     width: 1px;
-    height: 15px;
+    height: 16px;
     background: #999;
     transform: rotate(45deg);
 }
