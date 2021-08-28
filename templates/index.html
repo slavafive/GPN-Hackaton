@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GPN-Hackathon</title>
+    <link rel="stylesheet" href="../static/styles/style.css">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Varela+Round&display=swap">
+</head>
+<body>
+
+<div class="logo">
+    <img src="../static/logo/logo.jpeg">
+</div>
+
+<div class="search">
+    <div class="icon">
+    </div>
+    <div class="input">
+        <input type="text" placeholder="Поиск" id="mysearch" style="padding-right: 35px">
+    </div>
+    <span class="clear" onclick="document.getElementById('mysearch').value = ''"></span>
+</div>
+
+
+<ul class="companies">
+
+    {% for company in companies %}
+    <li class="container">
+        <a class="card1" href="#">
+            <h3>{{ company['Title'] }}</h3>
+            <p class="small">Контактная информация компании: </p>
+            <p class="phone"><strong> Телефон : </strong> <i class="phone-value"> {{ company['Phone'] }} </i></p>
+            <p class="email"><strong> Email : </strong> <i class="email-value"> {{ company['Email'] }} </i></p>
+            <p class="social-network"><strong> Социальные сети : </strong> <i class="social-network-value"> network </i> </p>
+            <div class="go-corner" href="#">
+                <div class="go-arrow">
+                    →
+                </div>
+            </div>
+        </a>
+    </li>
+    {% endfor %}
+
+    <!--<li class="container">
+        <a class="card1" href="#">
+            <h3>ООО Футбол</h3>
+            <p class="small">Контактная информация компании: </p>
+            <p class="phone"><strong> Телефон : </strong> <i class="phone-value"> +7 999 99 99 </i></p>
+            <p class="email"><strong> Email : </strong> <i class="email-value"> email </i></p>
+            <p class="social-network"><strong> Социальные сети : </strong> <i class="social-network-value"> network </i> </p>
+            <div class="go-corner" href="#">
+                <div class="go-arrow">
+                    →
+                </div>
+            </div>
+        </a>
+    </li>
+
+    <li class="container">
+        <a class="card1" href="#">
+            <h3>ООО Алибаба</h3>
+            <p class="small">Контактная информация компании: </p>
+            <p class="phone"><strong> Телефон : </strong> <i class="phone-value"> +7 999 99 99 </i></p>
+            <p class="email"><strong> Email : </strong> <i class="email-value"> email </i></p>
+            <p class="social-network"><strong> Социальные сети : </strong> <i class="social-network-value"> network </i> </p>
+            <div class="go-corner" href="#">
+                <div class="go-arrow">
+                    →
+                </div>
+            </div>
+        </a>
+    </li>
+
+    <li class="container">
+        <a class="card1" href="#">
+            <h3>ООО Газпром</h3>
+            <p class="small">Контактная информация компании: </p>
+            <p class="phone"><strong> Телефон : </strong> <i class="phone-value"> +7 999 99 99 </i></p>
+            <p class="email"><strong> Email : </strong> <i class="email-value"> email </i></p>
+            <p class="social-network"><strong> Социальные сети : </strong> <i class="social-network-value"> network </i> </p>
+            <div class="go-corner" href="#">
+                <div class="go-arrow">
+                    →
+                </div>
+            </div>
+        </a>
+    </li>-->
+
+</ul>
+
+
+<script>
+    const icon = document.querySelector('.icon');
+    const search = document.querySelector('.search');
+    icon.onclick = function (){
+        search.classList.toggle('active')
+    }
+</script>
+</body>
+</html>
