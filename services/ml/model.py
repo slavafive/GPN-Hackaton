@@ -1,19 +1,15 @@
-from flask import Flask, request, render_template
 import pandas as pd
 import numpy as np
 import json
 from sklearn.neighbors import KNeighborsClassifier as kNN
-from services.ml.vectorizer import vectorize_text
+from ml.vectorizer import vectorize_text
 
-app = Flask(__name__)
 
-print('hello world')
-
-with open('services\data\companies.json') as file:
+with open('../data/companies.json') as file:
     companies = json.load(file)
 
-df_google = pd.read_csv(R'C:\Users\zenbook\WebstormProjects\GPN-Hackaton\services\data\vec_google.csv')
-df_rbk = pd.read_csv(R'C:\Users\zenbook\WebstormProjects\GPN-Hackaton\services\data\vec_rbk.csv')
+df_google = pd.read_csv('../data/vec_google.csv')
+df_rbk = pd.read_csv('../data/vec_rbk.csv')
 df = pd.concat([df_google, df_rbk]).sort_values(by=['name']).reset_index(drop=True)
 df = df_rbk.sort_values(by=['name']).reset_index(drop=True)
 
@@ -63,23 +59,14 @@ def get_info_by_company(company_name):
                 company_info['phone'] = company_info['phone'].replace(' ', '')
     return company_info
 
-@app.route('/', methods=['GET'])
-def index():
-    key_words = request.args.get('text')
-    if key_words != None:
-        top_n_list = list(predict_top_n_companies_by_text(text=key_words, n=30)[0])
-        top_n_companies = get_top_n_companies_from_list(top_n_list, n=3)
-        companies_info = []
-        for company_name in top_n_companies:
-            companies_info.append(get_info_by_company(company_name))
-        print(companies_info)
-        return render_template('index.html', companies=companies_info)
-    print(key_words)
-    return render_template('index.html', companies=get_companies(key_words))
 
-def get_companies(key_words):
-    companies = [{'Title':f'ООО {key_words}', 'Address':'Улица', 'Phone': '+79217777777', 'Email':'email@gmail.com', 'Website':'www.site.com'}, {'Title':'ООО Реформа', 'Address':'Улица', 'Phone': '+79217777777', 'Email':'email@gmail.com', 'Website':'www.site.com'}, {'Title':'ООО Реформа', 'Address':'Улица', 'Phone': '+79217777777', 'Email':'email@gmail.com', 'Website':'www.site.com'}]
-    return companies
+def query(text, n=3, k=30):
+    top_n_list = list(predict_top_n_companies_by_text(text=text, n=k)[0])
+    top_n_companies = get_top_n_companies_from_list(top_n_list, n=n)
+    companies_info = []
+    for company_name in top_n_companies:
+        companies_info.append(get_info_by_company(company_name))
+    return companies_info
 
-if __name__ == '__main__':
-    app.run(debug=True)
+
+print(query(text='Нефть газ россия газпром национальное достояние'))

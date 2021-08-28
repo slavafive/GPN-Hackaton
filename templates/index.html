@@ -28,11 +28,11 @@
     {% for company in companies %}
     <li class="container">
         <a class="card1" href="#">
-            <h3>{{ company['Title'] }}</h3>
+            <h3>{{ company['name'] }}</h3>
             <p class="small">Контактная информация компании: </p>
-            <p class="phone"><strong> Телефон : </strong> <i class="phone-value"> {{ company['Phone'] }} </i></p>
-            <p class="email"><strong> Email : </strong> <i class="email-value"> {{ company['Email'] }} </i></p>
-            <p class="social-network"><strong> Социальные сети : </strong> <i class="social-network-value"> network </i> </p>
+            <p class="phone"><strong> Телефон : </strong> <i class="phone-value"> {{ company['phone'] }} </i></p>
+            <p class="email"><strong> Email : </strong> <i class="email-value"> {{ company['email'] }} </i></p>
+            <p class="social-network"><strong> Социальные сети : </strong> <i class="social-network-value"> {{ company['link'] }} </i> </p>
             <div class="go-corner" href="#">
                 <div class="go-arrow">
                     →

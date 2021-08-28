@@ -1,8 +1,14 @@
 import requests
 from bs4 import BeautifulSoup
 import re
-from python_scripts.find_contacts import find_company_info
 
+from ml.vectorizer import vectorize_corpus
+from python_scripts.find_contacts import find_company_info
+import json
+import pandas as pd
+
+from python_scripts.text_processing import clean_text
+from python_scripts.web_scraper import save_vectorized_texts
 
 URL = 'https://companies.rbc.ru/id/'
 
@@ -73,9 +79,36 @@ def parse_companies_by_category(category_id, page_limit=50):
     return companies
 
 
+def save_companies():
+    companies = []
+    names = []
+    ids = []
+    corpus = []
+
+    for category in CATEGORIES_MAP:
+        print(f'Категория: {category}')
+        current_companies = parse_companies_by_category(category_id=CATEGORIES_MAP[category], page_limit=50)
+        print(f'Кол-во компаний: {len(current_companies)}')
+        companies.extend(current_companies)
+        for company in current_companies:
+            names.append(company['name'])
+            ids.append(company['id'])
+            activities = []
+            for activity in company['activities']:
+                activities.append(activity['description'])
+            activities = ' '.join(activities)
+            corpus.append(activities)
+
+    corpus = list(map(clean_text, corpus))
+    vectorized_corpus = vectorize_corpus(corpus, method='tfidf')
+    vectorized_corpus_df = pd.DataFrame(vectorized_corpus)
+
+    with open('companies.json', 'w') as file:
+        json.dump(companies, file)
+
+    pd.concat([pd.DataFrame({'name': names}), vectorized_corpus_df], axis=1).to_csv('../data/vec_rbk.csv', index=False)
+    pd.DataFrame({'name': names, 'id': ids}).to_csv('companies.csv', index=False)
+
+
 if __name__ == '__main__':
-    category = 'химическая промышленность'
-    print(f'Категория: {category}')
-    companies = parse_companies_by_category(category_id=CATEGORIES_MAP[category], page_limit=1)
-    print(f'Найдено компаний: {len(companies)}')
-    print(f'Первые 10 компаний: {companies[:10]}')
+    save_vectorized_texts()
