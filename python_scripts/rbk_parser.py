@@ -8,7 +8,7 @@ import json
 import pandas as pd
 
 from python_scripts.text_processing import clean_text
-from python_scripts.web_scraper import save_vectorized_texts, parse_texts_from_top_sites
+from python_scripts.web_scraper import save_vectorized_texts
 
 URL = 'https://companies.rbc.ru/id/'
 
@@ -87,7 +87,7 @@ def save_companies():
 
     for category in CATEGORIES_MAP:
         print(f'Категория: {category}')
-        current_companies = parse_companies_by_category(category_id=CATEGORIES_MAP[category], page_limit=1)
+        current_companies = parse_companies_by_category(category_id=CATEGORIES_MAP[category], page_limit=50)
         print(f'Кол-во компаний: {len(current_companies)}')
         companies.extend(current_companies)
         for company in current_companies:
@@ -100,7 +100,7 @@ def save_companies():
             corpus.append(activities)
 
     corpus = list(map(clean_text, corpus))
-    vectorized_corpus = vectorize_corpus(corpus)
+    vectorized_corpus = vectorize_corpus(corpus, method='tfidf')
     vectorized_corpus_df = pd.DataFrame(vectorized_corpus)
 
     with open('companies.json', 'w') as file:
@@ -111,10 +111,4 @@ def save_companies():
 
 
 if __name__ == '__main__':
-    # filename = '../data/companies.json'
-    # save_companies()
     save_vectorized_texts()
-
-    # name = 'ООО  ОМЗ-СПЕЦСТАЛЬ'
-    # name = 'ООО  ТРАНСНЕФТЬ - ДАЛЬНИЙ ВОСТОК'
-    # parse_texts_from_top_sites(query=f'Информация о компании {name}', n=5)
