@@ -4,6 +4,8 @@ import re
 from python_scripts.find_contacts import find_company_info
 
 
+URL = 'https://companies.rbc.ru/id/'
+
 CATEGORIES_MAP = {
     'ТЭК': 543,
     'химическая промышленность': 557,
@@ -12,6 +14,21 @@ CATEGORIES_MAP = {
     'нефтегазовая промышленность': 613,
     'добыча полезных ископаемых': 617
 }
+
+
+def parse_company_activities(company_id):
+    activities = []
+    page = requests.get(URL + company_id)
+    soup = BeautifulSoup(page.content, 'html.parser')
+    tags_info = soup.find_all('span', {'class': 'company-okved__code'})
+    for tag_info in tags_info:
+        activity = {
+            'code': tag_info.text,
+            'description': tag_info.parent.nextSibling.text
+        }
+        if activity not in activities:
+            activities.append(activity)
+    return list(activities)
 
 
 def parse_companies_found(url):
@@ -33,7 +50,9 @@ def parse_companies(url):
             'id': link.split('/')[-2],
             'title': tag_info.attrs['title'].strip()
         }
-        company_info.update(find_company_info(company_info['id']))
+        company_id = company_info['id']
+        company_info.update({'activities': parse_company_activities(company_id)})
+        company_info.update(find_company_info(company_id))
         companies.append(company_info)
     return companies
 
@@ -57,6 +76,6 @@ def parse_companies_by_category(category_id, page_limit=50):
 if __name__ == '__main__':
     category = 'химическая промышленность'
     print(f'Категория: {category}')
-    companies = parse_companies_by_category(category_id=CATEGORIES_MAP[category], page_limit=5)
+    companies = parse_companies_by_category(category_id=CATEGORIES_MAP[category], page_limit=1)
     print(f'Найдено компаний: {len(companies)}')
     print(f'Первые 10 компаний: {companies[:10]}')
