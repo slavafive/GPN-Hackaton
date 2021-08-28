@@ -68,6 +68,7 @@ body{
 .search .input
 {
     position: relative;
+    padding: 5px;
     width: 300px;
     height: 60px;
     left: 60px;
@@ -135,7 +136,7 @@ body{
     height: 100%;
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     flex-basis: 33%;
 }
@@ -149,15 +150,21 @@ body{
 }
 
 .card1 p {
-    font-size: 17px;
+    font-size: 13px;
     font-weight: 400;
     line-height: 20px;
-    color: #666666;
+    color: #000000;
 
 }
 
+.card1 .phone {
+    padding-top: 7px;
+}
+
 p.small {
-    font-size: 14px;
+    color: #666666;
+    font-size: 15px;
+    font-weight: 20;
 }
 
 .go-corner {
@@ -184,7 +191,7 @@ p.small {
 .card1 {
     display: block;
     position: relative;
-    max-width: 262px;
+    max-width: 320px;
     background-color: #f2f8f9;
     border-radius: 4px;
     padding: 32px 24px;
@@ -223,5 +230,16 @@ p.small {
 .card1:hover p {
     transition: all 0.3s ease-out;
     color: rgba(255, 255, 255, 0.8);
+}
+
+.logo {
+    position: absolute;
+    z-index: 0;
+    top: 30px;
+    left: 30px;
+}
+
+.logo img {
+    width: 150px;
 }
 
