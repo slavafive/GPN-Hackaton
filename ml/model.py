@@ -7,14 +7,14 @@ from sklearn.neighbors import KNeighborsClassifier as kNN
 from ml.vectorizer import vectorize_text
 from python_scripts.text_processing import clean_text
 
-with open('../data/companies0.json') as file:
+with open('../data/companies.json') as file:
     companies = json.load(file)
 
 
 TFIDF = False
 
-df_text = pd.read_csv('../data/companies0.csv').rename(columns={'corpus': 'text'})
-df = pd.read_csv('../data/vec_rbk0.csv').merge(df_text, on='name').sample(frac=1).reset_index(drop=True)
+df_text = pd.read_csv('../data/companies.csv').rename(columns={'corpus': 'text'})
+df = pd.read_csv('../data/vec_rbk.csv').merge(df_text, on='name').sample(frac=1).reset_index(drop=True)
 
 if TFIDF:
     corpus = []
@@ -125,4 +125,4 @@ def query(text, n=3, k=100):
     return companies_info
 
 
-print(query(text='уголь and древесина and машина'))
+print(query(text='уголь or древесина or машина'))

@@ -103,11 +103,11 @@ def save_companies():
     vectorized_corpus = vectorize_corpus(corpus)
     vectorized_corpus_df = pd.DataFrame(vectorized_corpus)
 
-    with open('../data/companies0.json', 'w') as file:
+    with open('../data/companies.json', 'w') as file:
         json.dump(companies, file)
 
-    pd.concat([pd.DataFrame({'name': names}), vectorized_corpus_df], axis=1).to_csv('../data/vec_rbk0.csv', index=False)
-    pd.DataFrame({'name': names, 'id': ids, 'corpus': corpus}).to_csv('../data/companies0.csv', index=False)
+    pd.concat([pd.DataFrame({'name': names}), vectorized_corpus_df], axis=1).to_csv('../data/vec_rbk.csv', index=False)
+    pd.DataFrame({'name': names, 'id': ids, 'corpus': corpus}).to_csv('../data/companies.csv', index=False)
 
 
 if __name__ == '__main__':
