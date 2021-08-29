@@ -1,9 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 import re
-# pip install google
 from googlesearch import search
-import json
 import pandas as pd
 
 from ml.vectorizer import vectorize_corpus
@@ -63,27 +61,6 @@ def save_vectorized_texts():
     df = pd.DataFrame({'name': names})
     df = pd.concat([df, vectorized_corpus_df], axis=1)
     df.to_csv('../data/vec_google.csv', index=False)
-
-    # with open('') as file:
-    #     companies = json.load(file)
-    # corpus = []
-    # names = []
-    # ids = []
-    # for company in companies:
-    #     text = []
-    #     activities = company['activities']
-    #     for activity in activities:
-    #         text.append(activity['description'])
-    #     text = ' '.join(text)
-    #     clean_text_ = clean_text(text)
-    #     corpus.append(clean_text_)
-    #     names.append(company['name'])
-    #     ids.append(company['id'])
-    # vectorized_corpus = vectorize_corpus(corpus)
-    # vectorized_corpus_df = pd.DataFrame(vectorized_corpus)
-    # df = pd.DataFrame({'name': names, 'id': ids})
-    # df = pd.concat([df, vectorized_corpus_df], axis=1)
-    # df.to_csv('../data/vec.csv', index=False)
 
 
 if __name__ == '__main__':

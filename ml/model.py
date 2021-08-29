@@ -1,39 +1,56 @@
 import pandas as pd
 import numpy as np
 import json
+import re
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.neighbors import KNeighborsClassifier as kNN
 from ml.vectorizer import vectorize_text
+from python_scripts.text_processing import clean_text
 
-
-with open('../data/companies.json') as file:
+with open('../data/companies0.json') as file:
     companies = json.load(file)
 
-df_google = pd.read_csv('../data/vec_google.csv')
-df_rbk = pd.read_csv('../data/vec_rbk.csv')
-df = pd.concat([df_google, df_rbk]).sort_values(by=['name']).reset_index(drop=True)
-df = df_rbk.sort_values(by=['name']).reset_index(drop=True)
 
-features = [feature for feature in df.columns.values if feature.isdigit()]
+TFIDF = False
+
+df_text = pd.read_csv('../data/companies0.csv').rename(columns={'corpus': 'text'})
+df = pd.read_csv('../data/vec_rbk0.csv').merge(df_text, on='name').sample(frac=1).reset_index(drop=True)
+
+if TFIDF:
+    corpus = []
+    for company in companies:
+        activities = []
+        for activity in company['activities']:
+            activities.append(activity['description'])
+        activities = ' '.join(activities)
+        corpus.append(activities)
+
+    vectorizer = TfidfVectorizer()
+    X = vectorizer.fit_transform(corpus).toarray()
+    features = vectorizer.get_feature_names()
+else:
+    features = [feature for feature in df.columns.values if feature.isdigit()]
+    X = df[features]
+
 target = 'name'
 
-X = df[features]
 y = df[target]
-model = kNN(n_neighbors=25, metric='euclidean')
+model = kNN(n_neighbors=30, metric='euclidean')
 model.fit(X, y)
 
 
-def cosine(x, y):
-    return np.dot(x, y) / np.sqrt(np.linalg.norm(x) * np.linalg.norm(y))
-
-
 def get_top_company_by_text(text):
+    text = clean_text(text, normalize=True)
     text = vectorize_text(text)
     pred = model.predict([text])
     return pred[0]
 
 
 def predict_top_n_companies_by_text(text, n):
-    text = vectorize_text(text)
+    if TFIDF:
+        text = vectorizer.transform([text]).toarray()[0]
+    else:
+        text = vectorize_text(text)
     probs = model.predict_proba([text])
     best_n = np.argsort(probs, axis=1)[:, -n:]
     return best_n
@@ -60,13 +77,52 @@ def get_info_by_company(company_name):
     return company_info
 
 
-def query(text, n=3, k=30):
+def get_df_top_with_scores(df_top, text):
+    text = text.lower()
+    if re.search('or', text, re.IGNORECASE):
+        text_parts = re.split('or', text, flags=re.IGNORECASE)
+        operator = 'or'
+    elif re.search('and', text, re.IGNORECASE):
+        text_parts = re.split('and', text, flags=re.IGNORECASE)
+        operator = 'and'
+    else:
+        df_top['scores'] = 0
+        return
+    text_parts = list(map(str.strip, text_parts))
+    scores = []
+    for index, row in df_top.iterrows():
+        score = 0
+        try:
+            if operator == 'or':
+                for text_part in text_parts:
+                    if text_part in df_top.loc[index, 'text']:
+                        score += 1
+            elif operator == 'and':
+                score = 1
+                for text_part in text_parts:
+                    if text_part not in df_top.loc[index, 'text']:
+                        score = 0
+                        break
+        except Exception as e:
+            pass
+        scores.append(score)
+    df_top['scores'] = scores
+    return df_top
+
+
+def query(text, n=3, k=100):
+    if re.search('or', text, re.IGNORECASE) and re.search('and', text, re.IGNORECASE):
+        return 'Неправильный формат ввода'
     top_n_list = list(predict_top_n_companies_by_text(text=text, n=k)[0])
-    top_n_companies = get_top_n_companies_from_list(top_n_list, n=n)
+    df_top = df.iloc[top_n_list]
+    df_top = get_df_top_with_scores(df_top, text)
+    scores = list(df_top['scores'])
+    top_scores_indices = list(np.argsort(scores)[-n:])
+    top_n_companies = list(df_top.iloc[top_scores_indices]['name'])
     companies_info = []
     for company_name in top_n_companies:
         companies_info.append(get_info_by_company(company_name))
     return companies_info
 
 
-print(query(text='Нефть газ россия газпром национальное достояние'))
+print(query(text='уголь and древесина and машина'))
