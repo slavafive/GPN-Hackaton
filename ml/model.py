@@ -70,7 +70,8 @@ def get_info_by_company(company_name):
                 'link': company.get('link'),
                 'email': company.get('email'),
                 'phone': company.get('phone'),
-                'address': company.get('address')
+                'address': company.get('address'),
+                'activities': company.get('activities')
             }
             if company_info.get('phone') is not None:
                 company_info['phone'] = company_info['phone'].replace(' ', '')
